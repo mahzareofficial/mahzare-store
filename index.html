@@ -4,7 +4,6 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>Mahzari — Wear Your Elegance</title>
-<!-- CUSTOM FAVICON -->
 <link rel="icon" href="https://cdn-icons-png.flaticon.com/512/3136/3136872.png" type="image/png">
 
 <link rel="preconnect" href="https://fonts.googleapis.com">
@@ -44,26 +43,32 @@ tailwind.config = {
   /* Hide scrollbar */
   ::-webkit-scrollbar { width: 8px; }
   ::-webkit-scrollbar-thumb { background: #C5A880; border-radius: 4px; }
+  
+  /* Premium Toast Animation */
+  @keyframes slideUpFade { from { opacity: 0; transform: translateY(20px); } to { opacity: 1; transform: translateY(0); } }
+  .toast-enter { animation: slideUpFade 0.3s ease-out forwards; }
 </style>
 </head>
 
-<body class="font-body antialiased overflow-x-hidden">
+<body class="font-body antialiased overflow-x-hidden relative">
 
-<!-- ANNOUNCEMENT BAR -->
+<!-- TOAST NOTIFICATION -->
+<div id="toast" class="fixed bottom-10 left-1/2 -translate-x-1/2 z-[100] bg-gray-900 text-white text-sm font-medium px-6 py-3 rounded-full shadow-2xl opacity-0 pointer-events-none transition-all duration-300">
+  <span id="toastMsg"></span>
+</div>
+
+<!-- TOP ANNOUNCEMENT BAR -->
 <div class="bg-brand text-white text-xs tracking-widest uppercase py-2.5 overflow-hidden">
-  <div class="animate-marquee">
-    <span class="mx-4">✦ Free Delivery on Orders Above Rs. 3,000</span>
-    <span class="mx-4">✦ Cash on Delivery Available</span>
-    <span class="mx-4">✦ Flat 90% OFF Setup Sale</span>
-    <span class="mx-4">✦ Easy 7-Day Exchange Policy</span>
-    <span class="mx-4">✦ Free Delivery on Orders Above Rs. 3,000</span>
-    <span class="mx-4">✦ Cash on Delivery Available</span>
+  <div id="topBarMarquee" class="animate-marquee">
+    <!-- Text injected by JS -->
   </div>
 </div>
 
 <!-- NAVBAR -->
 <header class="sticky top-0 z-40 bg-white/95 backdrop-blur-md border-b border-gray-100">
   <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 flex items-center justify-between h-20">
+    
+    <!-- Logo -->
     <a href="#" class="flex items-center gap-3 group">
       <div class="w-10 h-10 rounded-full border border-gold flex items-center justify-center text-gold group-hover:bg-gold group-hover:text-white transition-colors">
         <i class="fa-solid fa-crown text-sm"></i>
@@ -73,6 +78,8 @@ tailwind.config = {
         <p class="text-[9px] uppercase tracking-[0.3em] text-textMuted mt-0.5">Wear Your Elegance</p>
       </div>
     </a>
+
+    <!-- Desktop Nav -->
     <nav class="hidden md:flex items-center gap-8 text-sm font-medium text-textMain">
       <a href="#" class="hover:text-brand transition-colors">Home</a>
       <a href="#collection" class="hover:text-brand transition-colors">New Arrivals</a>
@@ -80,7 +87,23 @@ tailwind.config = {
       <a href="#about" class="hover:text-brand transition-colors">Our Story</a>
       <a href="#contact" class="hover:text-brand transition-colors">Contact</a>
     </nav>
+
+    <!-- Right Icons (Currency, Wishlist, Cart) -->
     <div class="flex items-center gap-5">
+      <span class="hidden sm:inline-block text-xs font-bold text-textMuted border border-gray-200 px-3 py-1 rounded-full">PKR</span>
+      
+      <!-- Wishlist Icon -->
+      <button class="relative text-textMain hover:text-brand transition-colors">
+        <i class="fa-regular fa-heart text-lg"></i>
+        <span id="wishlistCount" class="absolute -top-1.5 -right-1.5 bg-brand text-white text-[9px] font-bold w-4 h-4 rounded-full flex items-center justify-center hidden">0</span>
+      </button>
+      
+      <!-- Cart Icon -->
+      <button id="cartBtn" class="relative text-textMain hover:text-brand transition-colors">
+        <i class="fa-solid fa-bag-shopping text-lg"></i>
+        <span id="cartCount" class="absolute -top-1.5 -right-1.5 bg-brand text-white text-[9px] font-bold w-4 h-4 rounded-full flex items-center justify-center hidden">0</span>
+      </button>
+
       <button id="mobileMenuBtn" class="md:hidden text-textMain text-xl"><i class="fa-solid fa-bars"></i></button>
     </div>
   </div>
@@ -91,7 +114,6 @@ tailwind.config = {
   <div id="heroContainer">
     <div class="hero-slide active" style="background-image: url('https://images.unsplash.com/photo-1583391733956-6c78276477e2?auto=format&fit=crop&w=1920&q=80');"></div>
     <div class="hero-slide" style="background-image: url('https://images.unsplash.com/photo-1605763240000-7e93b172d754?auto=format&fit=crop&w=1920&q=80');"></div>
-    <div class="hero-slide" style="background-image: url('https://images.unsplash.com/photo-1617922001439-4a2e6562f328?auto=format&fit=crop&w=1920&q=80');"></div>
   </div>
   <div class="absolute inset-0 bg-black/40"></div>
   <div class="relative z-10 max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 w-full text-center sm:text-left">
@@ -107,24 +129,7 @@ tailwind.config = {
   </div>
 </section>
 
-<!-- AUTO-SCROLLING GALLERY (Naya Section) -->
-<section class="py-12 bg-white overflow-hidden border-b border-gray-100">
-  <p class="text-center text-xs font-semibold text-gold uppercase tracking-[0.2em] mb-6">Follow our style</p>
-  <div class="animate-marquee gap-4">
-    <!-- 6 Images for scroll -->
-    <img src="https://images.unsplash.com/photo-1610030469983-98e550d6193c?w=300&h=400&fit=crop" class="w-48 h-64 object-cover rounded-xl">
-    <img src="https://images.unsplash.com/photo-1617922001439-4a2e6562f328?w=300&h=400&fit=crop" class="w-48 h-64 object-cover rounded-xl">
-    <img src="https://images.unsplash.com/photo-1583391733956-6c78276477e2?w=300&h=400&fit=crop" class="w-48 h-64 object-cover rounded-xl">
-    <img src="https://images.unsplash.com/photo-1605763240000-7e93b172d754?w=300&h=400&fit=crop" class="w-48 h-64 object-cover rounded-xl">
-    <img src="https://images.unsplash.com/photo-1524492412937-b28074a5d7da?w=300&h=400&fit=crop" class="w-48 h-64 object-cover rounded-xl">
-    <img src="https://images.unsplash.com/photo-1610030181087-540017ffa87c?w=300&h=400&fit=crop" class="w-48 h-64 object-cover rounded-xl">
-    <!-- Duplicate for seamless loop -->
-    <img src="https://images.unsplash.com/photo-1610030469983-98e550d6193c?w=300&h=400&fit=crop" class="w-48 h-64 object-cover rounded-xl">
-    <img src="https://images.unsplash.com/photo-1617922001439-4a2e6562f328?w=300&h=400&fit=crop" class="w-48 h-64 object-cover rounded-xl">
-  </div>
-</section>
-
-<!-- PRODUCT CATALOG -->
+<!-- PRODUCT CATALOG (MAIN SECTION) -->
 <section id="collection" class="py-20 max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
   <div class="text-center max-w-2xl mx-auto mb-12">
     <span class="text-gold text-xs font-semibold uppercase tracking-[0.2em]">Curated For You</span>
@@ -132,7 +137,7 @@ tailwind.config = {
   </div>
 
   <div class="flex flex-wrap justify-center gap-3 mb-12" id="filterContainer">
-    <button data-filter="All" class="filter-btn bg-brand text-white px-6 py-2.5 rounded-full text-sm font-medium shadow-md">All Designs</button>
+    <button data-filter="All" class="filter-btn bg-brand text-white px-6 py-2.5 rounded-full text-sm font-medium shadow-md">All</button>
     <button data-filter="Stitched" class="filter-btn bg-white border border-gray-200 text-textMain hover:border-brand px-6 py-2.5 rounded-full text-sm font-medium">Stitched</button>
     <button data-filter="Unstitched" class="filter-btn bg-white border border-gray-200 text-textMain hover:border-brand px-6 py-2.5 rounded-full text-sm font-medium">Unstitched</button>
     <button data-filter="Festive" class="filter-btn bg-white border border-gray-200 text-textMain hover:border-brand px-6 py-2.5 rounded-full text-sm font-medium">Festive</button>
@@ -144,68 +149,67 @@ tailwind.config = {
   </div>
 </section>
 
-<!-- ABOUT US / OUR STORY -->
-<section id="about" class="py-20 bg-white border-y border-gray-100">
-  <div class="max-w-4xl mx-auto px-4 text-center">
-    <span class="text-gold text-xs font-semibold uppercase tracking-[0.2em]">Our Story</span>
-    <h2 class="font-display text-4xl font-bold text-textMain mt-3 mb-6">About Mahzari</h2>
-    <p class="text-textMuted leading-relaxed mb-4">
-      Mahzari ka safar ek simple khwahish se shuru hua — Pakistani khawateen ko woh premium quality aur trending designs faraham karna jo unhein boutiques mein mehngi qeemat par milte hain.
-    </p>
-    <p class="text-textMuted leading-relaxed">
-      Hamari har suit handpicked hoti hai. Chahe woh lawn ka embroidered 3-piece ho ya chiffon ki festive luxury, hum quality par koi compromise nahi karte.
-    </p>
+<!-- AUTO-SCROLLING GALLERY (Moved Down) -->
+<section class="py-12 bg-white overflow-hidden border-y border-gray-100">
+  <p class="text-center text-xs font-semibold text-gold uppercase tracking-[0.2em] mb-6">Follow our style @mahzari</p>
+  <div class="animate-marquee gap-4">
+    <img src="https://images.unsplash.com/photo-1610030469983-98e550d6193c?w=300&h=400&fit=crop" class="w-48 h-64 object-cover rounded-xl">
+    <img src="https://images.unsplash.com/photo-1617922001439-4a2e6562f328?w=300&h=400&fit=crop" class="w-48 h-64 object-cover rounded-xl">
+    <img src="https://images.unsplash.com/photo-1583391733956-6c78276477e2?w=300&h=400&fit=crop" class="w-48 h-64 object-cover rounded-xl">
+    <img src="https://images.unsplash.com/photo-1605763240000-7e93b172d754?w=300&h=400&fit=crop" class="w-48 h-64 object-cover rounded-xl">
+    <img src="https://images.unsplash.com/photo-1524492412937-b28074a5d7da?w=300&h=400&fit=crop" class="w-48 h-64 object-cover rounded-xl">
+    <!-- Duplicate -->
+    <img src="https://images.unsplash.com/photo-1610030469983-98e550d6193c?w=300&h=400&fit=crop" class="w-48 h-64 object-cover rounded-xl">
+    <img src="https://images.unsplash.com/photo-1617922001439-4a2e6562f328?w=300&h=400&fit=crop" class="w-48 h-64 object-cover rounded-xl">
+    <img src="https://images.unsplash.com/photo-1583391733956-6c78276477e2?w=300&h=400&fit=crop" class="w-48 h-64 object-cover rounded-xl">
   </div>
 </section>
 
-<!-- TESTIMONIALS -->
-<section class="py-20 max-w-7xl mx-auto px-4">
-  <div class="text-center mb-12">
-    <span class="text-brand text-xs font-semibold uppercase tracking-[0.2em]">Testimonials</span>
-    <h2 class="font-display text-4xl font-bold text-textMain mt-3">Customers Kya Kehti Hain</h2>
-  </div>
-  <div class="grid grid-cols-1 md:grid-cols-3 gap-8">
-    <div class="bg-white p-8 rounded-2xl shadow-sm border border-pink-100">
-      <div class="flex text-gold mb-4 gap-1 text-sm"><i class="fa-solid fa-star"></i><i class="fa-solid fa-star"></i><i class="fa-solid fa-star"></i><i class="fa-solid fa-star"></i><i class="fa-solid fa-star"></i></div>
-      <p class="text-textMuted text-sm italic mb-6">"Lawn suit ki quality bilkul pictures jaisi thi. Delivery sirf 2 din mein ho gayi. Zaroor dobara order karungi!"</p>
-      <div class="flex items-center gap-3"><div class="w-10 h-10 rounded-full bg-brand/10 text-brand flex items-center justify-center font-bold">A</div><div><h4 class="text-sm font-bold">Ayesha K.</h4><p class="text-[10px] text-textMuted">Lahore</p></div></div>
-    </div>
-    <div class="bg-white p-8 rounded-2xl shadow-sm border border-pink-100">
-      <div class="flex text-gold mb-4 gap-1 text-sm"><i class="fa-solid fa-star"></i><i class="fa-solid fa-star"></i><i class="fa-solid fa-star"></i><i class="fa-solid fa-star"></i><i class="fa-solid fa-star"></i></div>
-      <p class="text-textMuted text-sm italic mb-6">"Shaadi ke liye chiffon dress liya tha, sab ne tareef ki. Cash on delivery ki wajah se tension nahi hui."</p>
-      <div class="flex items-center gap-3"><div class="w-10 h-10 rounded-full bg-gold/20 text-gold flex items-center justify-center font-bold">F</div><div><h4 class="text-sm font-bold">Fatima Z.</h4><p class="text-[10px] text-textMuted">Karachi</p></div></div>
-    </div>
-    <div class="bg-white p-8 rounded-2xl shadow-sm border border-pink-100">
-      <div class="flex text-gold mb-4 gap-1 text-sm"><i class="fa-solid fa-star"></i><i class="fa-solid fa-star"></i><i class="fa-solid fa-star"></i><i class="fa-solid fa-star"></i><i class="fa-solid fa-star"></i></div>
-      <p class="text-textMuted text-sm italic mb-6">"WhatsApp par order karna itna asaan tha! Size exchange bhi foran ho gaya. Best customer service."</p>
-      <div class="flex items-center gap-3"><div class="w-10 h-10 rounded-full bg-gray-800 text-white flex items-center justify-center font-bold">S</div><div><h4 class="text-sm font-bold">Sana M.</h4><p class="text-[10px] text-textMuted">Islamabad</p></div></div>
-    </div>
-  </div>
+<!-- ABOUT US -->
+<section id="about" class="py-20 max-w-4xl mx-auto px-4 text-center">
+  <span class="text-gold text-xs font-semibold uppercase tracking-[0.2em]">Our Story</span>
+  <h2 class="font-display text-4xl font-bold text-textMain mt-3 mb-6">About Mahzari</h2>
+  <p class="text-textMuted leading-relaxed mb-4">Mahzari ka safar ek simple khwahish se shuru hua — Pakistani khawateen ko woh premium quality aur trending designs faraham karna jo unhein boutiques mein mehngi qeemat par milte hain.</p>
 </section>
 
 <!-- FOOTER -->
 <footer id="contact" class="bg-[#1a1a1a] text-gray-400 pt-16 pb-8">
   <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
     <div class="grid grid-cols-1 md:grid-cols-4 gap-12 mb-12">
+      
       <div class="md:col-span-1">
         <div class="flex items-center gap-3 mb-6"><div class="w-10 h-10 rounded-full border border-gold flex items-center justify-center text-gold"><i class="fa-solid fa-crown text-sm"></i></div><h2 class="font-display text-2xl font-bold text-white">Mahzari</h2></div>
         <p class="text-sm leading-relaxed mb-6">Premium Pakistani women's clothing. Quality, style aur affordability ka perfect combination.</p>
+        
+        <!-- Social Icons Added -->
+        <div class="flex gap-4">
+          <a href="#" class="w-9 h-9 rounded-full bg-white/5 hover:bg-brand flex items-center justify-center text-white transition-colors"><i class="fa-brands fa-facebook-f"></i></a>
+          <a href="#" class="w-9 h-9 rounded-full bg-white/5 hover:bg-brand flex items-center justify-center text-white transition-colors"><i class="fa-brands fa-instagram"></i></a>
+          <a href="https://wa.me/923299895921" class="w-9 h-9 rounded-full bg-white/5 hover:bg-[#25D366] flex items-center justify-center text-white transition-colors"><i class="fa-brands fa-whatsapp"></i></a>
+        </div>
       </div>
+
       <div><h4 class="text-white font-semibold mb-5 uppercase tracking-wider text-sm">Explore</h4><ul class="space-y-3 text-sm"><li><a href="#collection" class="hover:text-gold">New Arrivals</a></li><li><a href="#collection" class="hover:text-gold">Festive Collection</a></li><li><a href="#collection" class="hover:text-gold">Sale</a></li></ul></div>
       <div><h4 class="text-white font-semibold mb-5 uppercase tracking-wider text-sm">Customer Care</h4><ul class="space-y-3 text-sm"><li><a href="#" class="hover:text-gold">Delivery Policy</a></li><li><a href="#" class="hover:text-gold">Exchange & Returns</a></li><li><a href="#" class="hover:text-gold">FAQs</a></li></ul></div>
       <div><h4 class="text-white font-semibold mb-5 uppercase tracking-wider text-sm">Get In Touch</h4><ul class="space-y-3 text-sm"><li class="flex items-start gap-3"><i class="fa-solid fa-phone mt-1 text-gold"></i><span>0329-9895921</span></li><li class="flex items-start gap-3"><i class="fa-solid fa-envelope mt-1 text-gold"></i><span>chicwearpk@gmail.com</span></li></ul></div>
     </div>
+    
     <div class="border-t border-white/10 pt-6 flex flex-col sm:flex-row items-center justify-between gap-4">
       <p class="text-xs">&copy; <span id="year"></span> Mahzari. All rights reserved.</p>
+      <!-- POWERED BY TAG -->
+      <p class="text-[11px] text-gray-500">Powered by <span class="text-gold font-semibold">Tech Agency (Your Name)</span></p>
       <button id="adminLoginBtn" class="text-xs text-gray-600 hover:text-gold transition-colors flex items-center gap-1.5"><i class="fa-solid fa-lock text-[10px]"></i> Owner Login</button>
     </div>
   </div>
 </footer>
 
-<!-- FLOATING WHATSAPP -->
-<a href="https://wa.me/923299895921?text=Assalam%20o%20Alaikum%20Mahzari!" target="_blank" class="fixed bottom-6 right-6 z-40 w-14 h-14 bg-[#25D366] text-white rounded-full flex items-center justify-center text-2xl shadow-lg hover:scale-110 transition-all"><i class="fa-brands fa-whatsapp"></i></a>
+<!-- FLOATING WHATSAPP & CURRENCY (Bottom Left) -->
+<a href="https://wa.me/923299895921" target="_blank" class="fixed bottom-6 right-6 z-40 w-14 h-14 bg-[#25D366] text-white rounded-full flex items-center justify-center text-2xl shadow-lg hover:scale-110 transition-all"><i class="fa-brands fa-whatsapp"></i></a>
+<div class="fixed bottom-6 left-6 z-40 bg-white border border-gray-200 text-textMain px-4 py-2 rounded-full shadow-lg flex items-center gap-2">
+  <span class="text-lg">🇵🇰</span> <span class="text-xs font-bold">PKR</span>
+</div>
 
-<!-- PRODUCT MODAL (With Multi-Images) -->
+<!-- PRODUCT MODAL -->
 <div id="productModal" class="fixed inset-0 z-50 hidden">
   <div class="absolute inset-0 bg-black/60 backdrop-blur-sm" data-modal-close></div>
   <div class="relative z-10 flex items-center justify-center min-h-full p-4">
@@ -214,24 +218,30 @@ tailwind.config = {
       <div class="overflow-y-auto">
         <div class="grid md:grid-cols-2 gap-8 p-6 sm:p-10">
           
-          <!-- Image Gallery -->
           <div>
             <img id="modalMainImg" src="" class="w-full h-[350px] sm:h-[450px] object-cover rounded-xl bg-gray-50 mb-3">
-            <div id="modalThumbnails" class="grid grid-cols-4 gap-2">
-              <!-- Thumbnails injected by JS -->
-            </div>
+            <div id="modalThumbnails" class="grid grid-cols-4 gap-2"></div>
           </div>
 
           <div class="flex flex-col justify-center">
-            <span id="modalCategory" class="inline-flex self-start bg-gray-100 text-textMuted text-[10px] font-bold uppercase tracking-wider px-3 py-1.5 rounded-full mb-4"></span>
-            <h3 id="modalTitle" class="font-display text-3xl font-bold text-textMain mb-2"></h3>
+            <div class="flex justify-between items-start mb-2">
+              <span id="modalCategory" class="bg-gray-100 text-textMuted text-[10px] font-bold uppercase tracking-wider px-3 py-1.5 rounded-full"></span>
+              <button id="modalWishlistBtn" class="text-gray-400 hover:text-brand text-xl"><i class="fa-regular fa-heart"></i></button>
+            </div>
+            
+            <h3 id="modalTitle" class="font-display text-3xl font-bold text-textMain mb-1"></h3>
+            <p id="modalCode" class="text-xs text-gray-500 mb-4">Code: <span class="font-bold text-gray-800"></span></p>
+            
             <div class="flex items-center gap-3 mb-6 border-b border-gray-100 pb-6"><span id="modalSale" class="text-2xl font-semibold text-brand"></span><span id="modalOrig" class="text-textMuted line-through text-sm"></span></div>
             <p id="modalDesc" class="text-textMuted text-sm leading-relaxed mb-8"></p>
             
             <div id="sizeSection" class="mb-8 hidden"><p class="text-sm font-semibold text-textMain mb-3">Select Size</p><div id="sizeButtons" class="flex flex-wrap gap-2"></div></div>
             <div id="unstitchedNote" class="hidden mb-8 bg-blue-50/50 border border-blue-100 rounded-lg p-4"><p class="text-sm text-blue-800 font-medium"><i class="fa-solid fa-scissors mr-2"></i>Unstitched 3-Piece (All Sizes Suitable)</p></div>
             
-            <a id="modalOrderBtn" href="#" target="_blank" class="w-full inline-flex items-center justify-center gap-3 bg-[#25D366] hover:bg-[#1EBE5A] text-white font-semibold px-8 py-4 rounded-full shadow-lg transition-all"><i class="fa-brands fa-whatsapp text-xl"></i> Order on WhatsApp</a>
+            <div class="flex gap-3">
+              <button id="modalAddToCartBtn" class="flex-1 bg-brand hover:bg-[#7a1a29] text-white font-semibold px-6 py-4 rounded-full shadow-lg transition-all">Add to Cart</button>
+              <a id="modalOrderBtn" href="#" target="_blank" class="flex-1 inline-flex items-center justify-center gap-2 bg-[#25D366] hover:bg-[#1EBE5A] text-white font-semibold px-6 py-4 rounded-full shadow-lg transition-all"><i class="fa-brands fa-whatsapp text-xl"></i> Direct Order</a>
+            </div>
           </div>
         </div>
       </div>
@@ -239,17 +249,33 @@ tailwind.config = {
   </div>
 </div>
 
-<!-- ADMIN DASHBOARD (With Multi-Images & Banner Settings) -->
+<!-- CART MODAL -->
+<div id="cartModal" class="fixed inset-0 z-50 hidden">
+  <div class="absolute inset-0 bg-black/60 backdrop-blur-sm" data-cart-close></div>
+  <div class="relative z-10 flex items-center justify-center min-h-full p-4">
+    <div class="bg-white w-full max-w-lg rounded-2xl shadow-2xl relative max-h-[85vh] flex flex-col overflow-hidden">
+      <div class="flex justify-between items-center p-5 border-b">
+        <h3 class="font-display text-xl font-bold">Your Shopping Bag</h3>
+        <button type="button" data-cart-close class="text-gray-400 hover:text-brand"><i class="fa-solid fa-xmark text-xl"></i></button>
+      </div>
+      <div id="cartItems" class="p-5 overflow-y-auto flex-1 space-y-4"></div>
+      <div class="p-5 border-t bg-gray-50">
+        <div class="flex justify-between font-bold text-lg mb-4"><span>Total:</span><span id="cartTotal">Rs. 0</span></div>
+        <button id="checkoutBtn" class="w-full bg-[#25D366] text-white font-bold py-3.5 rounded-xl shadow-md hover:bg-[#1EBE5A] transition-colors flex items-center justify-center gap-2"><i class="fa-brands fa-whatsapp text-xl"></i> Checkout on WhatsApp</button>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- PIN & ADMIN MODALS (Combined for brevity in display, fully functional) -->
 <div id="pinModal" class="fixed inset-0 z-50 hidden">
   <div class="absolute inset-0 bg-black/70 backdrop-blur-sm" data-pin-close></div>
   <div class="relative z-10 flex items-center justify-center min-h-full p-4">
     <div class="bg-white rounded-2xl shadow-2xl w-full max-w-sm p-8 relative text-center">
       <button type="button" data-pin-close class="absolute top-4 right-4 text-gray-400 hover:text-brand"><i class="fa-solid fa-xmark text-lg"></i></button>
-      <h3 class="font-display text-2xl font-bold text-textMain mb-2">Owner Access</h3>
-      <p class="text-xs text-textMuted mb-6">Enter Password</p>
-      <input id="pinInput" type="password" class="w-full text-center text-xl tracking-[0.3em] font-bold border-2 border-gray-200 rounded-xl py-4 mb-2 focus:border-brand outline-none">
-      <p id="pinError" class="text-red-500 text-xs text-left mb-4 hidden">Incorrect Password!</p>
-      <button id="pinSubmitBtn" class="w-full bg-brand text-white font-semibold py-3.5 rounded-xl">Login</button>
+      <h3 class="font-display text-2xl font-bold mb-2">Owner Access</h3>
+      <input id="pinInput" type="password" class="w-full text-center text-xl border-2 rounded-xl py-3 mb-2">
+      <button id="pinSubmitBtn" class="w-full bg-brand text-white font-semibold py-3 rounded-xl">Login</button>
     </div>
   </div>
 </div>
@@ -258,122 +284,135 @@ tailwind.config = {
   <div class="absolute inset-0 bg-black/70 backdrop-blur-sm" data-admin-close></div>
   <div class="relative z-10 flex items-start justify-center min-h-full p-4">
     <div class="bg-white w-full max-w-4xl rounded-2xl shadow-2xl relative max-h-[90vh] flex flex-col overflow-hidden">
-      <div class="flex justify-between p-6 border-b border-gray-100 bg-gray-50"><h3 class="font-display text-xl font-bold">Mahzari Dashboard</h3><button type="button" data-admin-close class="text-gray-400 hover:text-brand"><i class="fa-solid fa-xmark text-xl"></i></button></div>
-      
-      <div class="overflow-y-auto p-6 space-y-8">
+      <div class="flex justify-between p-6 border-b bg-gray-50"><h3 class="font-display text-xl font-bold">Mahzari Dashboard</h3><button type="button" data-admin-close class="text-gray-400 hover:text-brand"><i class="fa-solid fa-xmark text-xl"></i></button></div>
+      <div class="overflow-y-auto p-6 space-y-6">
         
-        <!-- Banner Settings Section -->
-        <div class="bg-blue-50/50 rounded-xl p-6 border border-blue-100">
-          <h4 class="font-semibold mb-4 text-blue-900">Update Hero Banner Images</h4>
-          <form id="bannerForm" class="grid gap-4">
-            <input id="bannerImg1" type="url" placeholder="Banner Image 1 URL" class="border p-2 rounded">
-            <input id="bannerImg2" type="url" placeholder="Banner Image 2 URL" class="border p-2 rounded">
-            <input id="bannerImg3" type="url" placeholder="Banner Image 3 URL" class="border p-2 rounded">
-            <button type="submit" class="bg-blue-600 text-white py-2 rounded">Update Banners</button>
+        <!-- Site Settings (Top Bar Text) -->
+        <div class="bg-yellow-50 rounded-xl p-5 border border-yellow-200">
+          <h4 class="font-semibold mb-3">Edit Top Bar Text</h4>
+          <form id="topBarForm" class="flex gap-2">
+            <input id="topBarInput" type="text" required class="flex-1 border p-2 rounded" placeholder="Enter scrolling text...">
+            <button type="submit" class="bg-gray-800 text-white px-4 py-2 rounded">Save</button>
           </form>
         </div>
 
-        <!-- Add Product Section -->
-        <div class="bg-gray-50 rounded-xl p-6 border border-gray-100">
+        <!-- Add Product Form -->
+        <div class="bg-gray-50 rounded-xl p-5 border border-gray-200">
           <h4 class="font-semibold mb-4">Add New Product</h4>
           <form id="adminForm" class="grid sm:grid-cols-2 gap-4">
             <input id="adminTitleInput" type="text" required placeholder="Title" class="border p-2 rounded">
-            <select id="adminCategory" class="border p-2 rounded">
-              <option value="Stitched">Stitched</option>
-              <option value="Unstitched">Unstitched</option>
-              <option value="Festive">Festive</option>
-              <option value="Sale">Sale</option>
-            </select>
+            <input id="adminCodeInput" type="text" required placeholder="Product Code (e.g. MHZ-01)" class="border p-2 rounded">
+            <select id="adminCategory" class="border p-2 rounded"><option value="Stitched">Stitched</option><option value="Unstitched">Unstitched</option><option value="Festive">Festive</option><option value="Sale">Sale</option></select>
             <input id="adminSalePrice" type="number" required placeholder="Sale Price" class="border p-2 rounded">
             <input id="adminOrigPrice" type="number" required placeholder="Original Price" class="border p-2 rounded">
             <input id="adminDescInput" type="text" placeholder="Description" class="border p-2 rounded sm:col-span-2">
-            
-            <!-- 4 Image URLs -->
-            <input id="adminImg1" type="url" required placeholder="Image 1 URL (Main)" class="border p-2 rounded sm:col-span-2">
-            <input id="adminImg2" type="url" placeholder="Image 2 URL" class="border p-2 rounded sm:col-span-2">
-            <input id="adminImg3" type="url" placeholder="Image 3 URL" class="border p-2 rounded sm:col-span-2">
-            <input id="adminImg4" type="url" placeholder="Image 4 URL" class="border p-2 rounded sm:col-span-2">
-            
+            <input id="adminImg1" type="url" required placeholder="Image 1 (Main)" class="border p-2 rounded sm:col-span-2">
+            <input id="adminImg2" type="url" placeholder="Image 2" class="border p-2 rounded sm:col-span-2">
             <button type="submit" class="bg-brand text-white py-2 rounded sm:col-span-2">Add Product</button>
           </form>
         </div>
 
-        <!-- Manage Products -->
-        <h4 class="font-semibold mb-4">Manage Products</h4>
-        <div id="adminList" class="space-y-3"></div>
+        <div id="adminList" class="space-y-2"></div>
       </div>
     </div>
   </div>
 </div>
 
-<!-- JAVASCRIPT -->
 <script>
 (function () {
-  // --- Setup Supabase ---
   const SUPABASE_URL = 'https://cmgjhledlvtcyytezqxr.supabase.co'; 
   const SUPABASE_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImNtZ2pobGVkbHZ0Y3l5dGV6cXhyIiwicm9sZSI6ImFub24iLCJpYXQiOjE3OTI1NzY0MDUsImV4cCI6MjEwODE1MjQwNX0.gP9IdT--Q787p-t682pjPFH_PH7dsSyR27F7KXatH0g';
   const supabase = window.supabase.createClient(SUPABASE_URL, SUPABASE_KEY);
 
   const WA_NUM = '923299895921';
-  const ADMIN_PIN = 'mahzari2026'; // NAYA PASSWORD YAHAN HAI
+  const ADMIN_PIN = 'mahzari2026'; 
   const SIZES = ['S', 'M', 'L', 'XL'];
   
   let products = [];
   let currentFilter = 'All';
   let currentProduct = null;
   let selectedSize = 'M';
+  
+  // Cart & Wishlist (LocalStorage)
+  let cart = JSON.parse(localStorage.getItem('mahzari_cart')) || [];
+  let wishlist = JSON.parse(localStorage.getItem('mahzari_wishlist')) || [];
 
   const grid = document.getElementById('productGrid');
   const filterBtns = document.querySelectorAll('.filter-btn');
   const fmt = (n) => Number(n).toLocaleString('en-US');
 
-  function toast(msg) { alert(msg); }
+  function showToast(msg) {
+    const t = document.getElementById('toast');
+    document.getElementById('toastMsg').textContent = msg;
+    t.classList.remove('opacity-0', 'pointer-events-none');
+    t.classList.add('opacity-100', 'toast-enter');
+    setTimeout(() => { t.classList.remove('opacity-100', 'toast-enter'); t.classList.add('opacity-0', 'pointer-events-none'); }, 3000);
+  }
 
-  // --- 1. Fetch Data from Supabase ---
+  // --- 1. Fetch Data ---
   async function fetchData() {
-    // Fetch Products
-    const { data: pData, error: pError } = await supabase.from('products').select('*').order('created_at', { ascending: false });
-    if (!pError) { products = pData || []; renderProducts(); }
+    const { data: pData } = await supabase.from('products').select('*').order('created_at', { ascending: false });
+    if (pData) { products = pData; renderProducts(); }
     
-    // Fetch Banners
-    const { data: sData, error: sError } = await supabase.from('settings').select('*').eq('id', 1).single();
-    if (!sError && sData) {
+    const { data: sData } = await supabase.from('settings').select('*').eq('id', 1).single();
+    if (sData) {
+      // Update Hero Banners
       const container = document.getElementById('heroContainer');
       container.innerHTML = `
         <div class="hero-slide active" style="background-image: url('${sData.hero_image_1}');"></div>
         <div class="hero-slide" style="background-image: url('${sData.hero_image_2}');"></div>
         <div class="hero-slide" style="background-image: url('${sData.hero_image_3}');"></div>
       `;
-      startSlider(); // Restart slider with new images
+      startSlider(); 
+      
+      // Update Top Bar Text
+      if(sData.top_bar_text) {
+        document.getElementById('topBarMarquee').innerHTML = `<span class="mx-4">${sData.top_bar_text}</span><span class="mx-4">${sData.top_bar_text}</span>`;
+        document.getElementById('topBarInput').value = sData.top_bar_text;
+      }
     }
+    updateCartUI();
+    updateWishlistUI();
   }
 
-  // --- 2. Render Grid ---
+  // --- 2. Render Products ---
   function renderProducts() {
     const filtered = currentFilter === 'All' ? products : products.filter(p => p.category === currentFilter);
     if (filtered.length === 0) { grid.innerHTML = `<div class="col-span-full text-center py-10">No products found.</div>`; return; }
     
-    grid.innerHTML = filtered.map(p => `
-      <article data-view="${p.id}" class="group cursor-pointer">
+    grid.innerHTML = filtered.map(p => {
+      const isWishlisted = wishlist.includes(p.id);
+      return `
+      <article class="group relative">
         <div class="relative overflow-hidden rounded-xl bg-gray-100 aspect-[3/4]">
           <img src="${p.images[0]}" class="w-full h-full object-cover group-hover:scale-105 transition-transform duration-700">
-          <div class="absolute bottom-4 left-4 bg-white/90 backdrop-blur px-3 py-1.5 rounded-full flex items-center gap-2">
-            <i class="fa-solid ${p.category === 'Stitched' ? 'fa-shirt' : p.category === 'Festive' ? 'fa-star' : p.category === 'Sale' ? 'fa-tag' : 'fa-scissors'} text-brand text-[10px]"></i>
+          
+          <!-- Wishlist Heart -->
+          <button data-wish="${p.id}" class="absolute top-3 right-3 w-8 h-8 bg-white/90 rounded-full flex items-center justify-center shadow-sm hover:scale-110 transition-transform ${isWishlisted ? 'text-brand' : 'text-gray-400'}">
+            <i class="${isWishlisted ? 'fa-solid' : 'fa-regular'} fa-heart"></i>
+          </button>
+
+          <div class="absolute bottom-3 left-3 bg-white/90 backdrop-blur px-3 py-1 rounded-full flex items-center gap-2">
             <span class="text-[10px] font-bold uppercase text-textMain">${p.category}</span>
+          </div>
+          
+          <div class="absolute bottom-3 right-3 opacity-0 group-hover:opacity-100 transition-opacity">
+            <button data-view="${p.id}" class="bg-brand text-white text-xs font-semibold px-4 py-2 rounded-full shadow-lg">View</button>
           </div>
         </div>
         <div class="pt-4 pb-2">
-          <h3 class="font-display text-lg font-bold text-textMain mb-2 group-hover:text-brand transition-colors">${p.title}</h3>
+          <p class="text-[10px] text-gray-400 font-semibold mb-1">Code: ${p.product_code || 'N/A'}</p>
+          <h3 class="font-display text-lg font-bold text-textMain mb-1">${p.title}</h3>
           <div class="flex items-baseline gap-2">
             <span class="text-brand font-semibold">Rs. ${fmt(p.sale_price)}</span>
             <span class="text-textMuted text-xs line-through">Rs. ${fmt(p.original_price)}</span>
           </div>
         </div>
       </article>
-    `).join('');
+    `}).join('');
   }
 
-  // --- 3. Filter Logic ---
+  // --- 3. Filters ---
   filterBtns.forEach(btn => {
     btn.addEventListener('click', (e) => {
       filterBtns.forEach(b => { b.classList.remove('bg-brand','text-white'); b.classList.add('bg-white','text-textMain'); });
@@ -383,26 +422,63 @@ tailwind.config = {
     });
   });
 
-  // --- 4. Product Modal & Multi-Images ---
+  // --- 4. Wishlist Logic ---
+  function updateWishlistUI() {
+    const count = document.getElementById('wishlistCount');
+    if (wishlist.length > 0) { count.textContent = wishlist.length; count.classList.remove('hidden'); } 
+    else { count.classList.add('hidden'); }
+  }
+
+  document.addEventListener('click', (e) => {
+    // Wishlist button in grid or modal
+    const wishBtn = e.target.closest('[data-wish]');
+    if (wishBtn) {
+      e.preventDefault();
+      const id = wishBtn.dataset.wish;
+      if (wishlist.includes(id)) { wishlist = wishlist.filter(x => x !== id); showToast('Removed from Wishlist'); }
+      else { wishlist.push(id); showToast('Added to Wishlist ❤️'); }
+      localStorage.setItem('mahzari_wishlist', JSON.stringify(wishlist));
+      updateWishlistUI();
+      renderProducts();
+    }
+  });
+
+  // --- 5. Product Modal ---
+  document.addEventListener('click', (e) => {
+    const viewBtn = e.target.closest('[data-view]');
+    if (viewBtn) openProductModal(viewBtn.dataset.view);
+  });
+
   function openProductModal(id) {
     const p = products.find(x => x.id === id);
     if (!p) return;
     currentProduct = p; selectedSize = 'M';
     
-    // Main Image
     document.getElementById('modalMainImg').src = p.images[0];
-    
-    // Thumbnails (Filter out empty links)
-    const validImages = p.images.filter(img => img && img.trim() !== '');
-    document.getElementById('modalThumbnails').innerHTML = validImages.map((img, idx) => `
+    document.getElementById('modalThumbnails').innerHTML = p.images.map((img, idx) => `
       <img src="${img}" data-thumb="${idx}" class="w-full h-16 object-cover rounded cursor-pointer border-2 ${idx === 0 ? 'border-brand' : 'border-transparent'}" onclick="changeMainImage(this, '${img}')">
     `).join('');
 
     document.getElementById('modalCategory').textContent = p.category;
     document.getElementById('modalTitle').textContent = p.title;
+    document.getElementById('modalCode').querySelector('span').textContent = p.product_code || 'N/A';
     document.getElementById('modalSale').textContent = `Rs. ${fmt(p.sale_price)}`;
     document.getElementById('modalOrig').textContent = `Rs. ${fmt(p.original_price)}`;
     document.getElementById('modalDesc').textContent = p.description;
+
+    // Modal Wishlist
+    const isWishlisted = wishlist.includes(p.id);
+    const mwBtn = document.getElementById('modalWishlistBtn');
+    mwBtn.className = `text-xl ${isWishlisted ? 'text-brand' : 'text-gray-400 hover:text-brand'}`;
+    mwBtn.innerHTML = `<i class="${isWishlisted ? 'fa-solid' : 'fa-regular'} fa-heart"></i>`;
+    mwBtn.onclick = () => {
+      if (wishlist.includes(p.id)) { wishlist = wishlist.filter(x => x !== p.id); showToast('Removed from Wishlist'); }
+      else { wishlist.push(p.id); showToast('Added to Wishlist ❤️'); }
+      localStorage.setItem('mahzari_wishlist', JSON.stringify(wishlist));
+      updateWishlistUI();
+      renderProducts();
+      openProductModal(p.id); // refresh modal
+    };
 
     if (p.category === 'Stitched' || p.category === 'Festive') {
       document.getElementById('sizeSection').classList.remove('hidden');
@@ -432,79 +508,101 @@ tailwind.config = {
   }
 
   function updateModalOrderLink() {
-    let msg = `Assalam o Alaikum Mahzari! 🌸\n\nI want to order:\n👗 ${currentProduct.title}\n`;
+    let msg = `Assalam o Alaikum Mahzari! 🌸\n\nI want to order:\n👗 ${currentProduct.title} (Code: ${currentProduct.product_code})\n`;
     if (currentProduct.category === 'Stitched' || currentProduct.category === 'Festive') msg += `📏 Size: ${selectedSize}\n`;
-    msg += `💰 Price: Rs. ${fmt(currentProduct.sale_price)}`;
+    msg += `💰 Price: Rs. ${fmt(currentProduct.sale_price)}\n🖼️ Image: ${currentProduct.images[0]}`;
     document.getElementById('modalOrderBtn').href = `https://wa.me/${WA_NUM}?text=${encodeURIComponent(msg)}`;
   }
 
-  // --- 5. Admin Add/Delete & Banner Update ---
-  document.getElementById('adminForm').addEventListener('submit', async (e) => {
-    e.preventDefault();
-    // Collect up to 4 images, filter out empty strings
-    const imgArr = [
-      document.getElementById('adminImg1').value.trim(),
-      document.getElementById('adminImg2').value.trim(),
-      document.getElementById('adminImg3').value.trim(),
-      document.getElementById('adminImg4').value.trim()
-    ].filter(url => url !== '');
-
-    const newP = {
-      title: document.getElementById('adminTitleInput').value,
-      category: document.getElementById('adminCategory').value,
-      sale_price: Number(document.getElementById('adminSalePrice').value),
-      original_price: Number(document.getElementById('adminOrigPrice').value),
-      description: document.getElementById('adminDescInput').value,
-      images: imgArr // Array of links
-    };
+  // --- 6. Add to Cart Logic ---
+  document.getElementById('modalAddToCartBtn').addEventListener('click', () => {
+    if (!currentProduct) return;
+    const size = (currentProduct.category === 'Stitched' || currentProduct.category === 'Festive') ? selectedSize : 'One Size';
     
-    const { error } = await supabase.from('products').insert([newP]);
-    if (error) { alert('Error: ' + error.message); return; }
+    // Check if item with same size already in cart
+    const existingItem = cart.find(x => x.id === currentProduct.id && x.size === size);
+    if (existingItem) {
+      existingItem.qty += 1;
+    } else {
+      cart.push({
+        id: currentProduct.id,
+        title: currentProduct.title,
+        code: currentProduct.product_code,
+        price: currentProduct.sale_price,
+        image: currentProduct.images[0],
+        size: size,
+        qty: 1
+      });
+    }
     
-    e.target.reset();
-    fetchData();
-    document.getElementById('adminModal').classList.add('hidden');
-    toast('Product Added!');
+    localStorage.setItem('mahzari_cart', JSON.stringify(cart));
+    updateCartUI();
+    document.getElementById('productModal').classList.add('hidden');
+    showToast('Added to Shopping Bag 🛍️');
   });
 
-  document.getElementById('bannerForm').addEventListener('submit', async (e) => {
-    e.preventDefault();
-    const b1 = document.getElementById('bannerImg1').value.trim();
-    const b2 = document.getElementById('bannerImg2').value.trim();
-    const b3 = document.getElementById('bannerImg3').value.trim();
+  // --- 7. Cart UI & Checkout ---
+  function updateCartUI() {
+    const countEl = document.getElementById('cartCount');
+    const totalQty = cart.reduce((sum, item) => sum + item.qty, 0);
+    if (totalQty > 0) { countEl.textContent = totalQty; countEl.classList.remove('hidden'); } 
+    else { countEl.classList.add('hidden'); }
 
-    const { error } = await supabase.from('settings').update({
-      hero_image_1: b1, hero_image_2: b2, hero_image_3: b3
-    }).eq('id', 1);
-
-    if (error) { alert('Error updating banners'); return; }
+    const container = document.getElementById('cartItems');
+    if (cart.length === 0) {
+      container.innerHTML = `<p class="text-center text-gray-500 py-6">Your bag is empty.</p>`;
+    } else {
+      container.innerHTML = cart.map((item, index) => `
+        <div class="flex gap-4 border-b pb-4">
+          <img src="${item.image}" class="w-16 h-20 object-cover rounded">
+          <div class="flex-1">
+            <h4 class="font-bold text-sm">${item.title}</h4>
+            <p class="text-xs text-gray-500">Code: ${item.code} | Size: ${item.size}</p>
+            <p class="text-brand font-semibold text-sm mt-1">Rs. ${fmt(item.price)}</p>
+            <div class="flex items-center gap-3 mt-2">
+              <span class="text-xs">Qty: ${item.qty}</span>
+              <button data-remove="${index}" class="text-xs text-red-500 hover:underline">Remove</button>
+            </div>
+          </div>
+        </div>
+      `).join('');
+    }
     
-    fetchData(); // Reload banners
-    document.getElementById('adminModal').classList.add('hidden');
-    toast('Banners Updated!');
-  });
-
-  async function deleteProduct(id) {
-    if (!confirm('Delete this product?')) return;
-    const { error } = await supabase.from('products').delete().eq('id', id);
-    if (error) { alert('Error deleting'); return; }
-    fetchData();
+    const total = cart.reduce((sum, item) => sum + (item.price * item.qty), 0);
+    document.getElementById('cartTotal').textContent = `Rs. ${fmt(total)}`;
   }
 
-  function renderAdminList() {
-    document.getElementById('adminList').innerHTML = products.map(p => `
-      <div class="flex justify-between items-center border p-3 rounded">
-        <span>${p.title} - Rs. ${p.sale_price}</span>
-        <button onclick="window.deleteProduct('${p.id}')" class="text-red-500"><i class="fa-solid fa-trash"></i></button>
-      </div>
-    `).join('');
-  }
-  window.deleteProduct = deleteProduct;
-
-  // --- 6. PIN & Modals ---
-  document.getElementById('adminLoginBtn').addEventListener('click', () => {
-    document.getElementById('pinModal').classList.remove('hidden');
+  document.getElementById('cartBtn').addEventListener('click', () => document.getElementById('cartModal').classList.remove('hidden'));
+  
+  document.getElementById('cartItems').addEventListener('click', (e) => {
+    if (e.target.hasAttribute('data-remove')) {
+      const idx = e.target.getAttribute('data-remove');
+      cart.splice(idx, 1);
+      localStorage.setItem('mahzari_cart', JSON.stringify(cart));
+      updateCartUI();
+    }
   });
+
+  document.getElementById('checkoutBtn').addEventListener('click', () => {
+    if (cart.length === 0) return showToast('Your bag is empty!');
+    
+    let msg = `Assalam o Alaikum Mahzari! 🌸\n\nMujhe yeh items order karne hain:\n\n`;
+    let total = 0;
+    cart.forEach((item, i) => {
+      msg += `${i+1}. *${item.title}* (Code: ${item.code})\n`;
+      msg += `📏 Size: ${item.size}\n`;
+      msg += `💰 Rs. ${fmt(item.price)} x ${item.qty}\n`;
+      msg += `🖼️ Image: ${item.image}\n\n`;
+      total += item.price * item.qty;
+    });
+    msg += `*Total Amount: Rs. ${fmt(total)}*\n`;
+    msg += `🚚 Cash on Delivery`;
+    
+    window.open(`https://wa.me/${WA_NUM}?text=${encodeURIComponent(msg)}`, '_blank');
+  });
+
+  // --- 8. Admin Panel Logic ---
+  document.getElementById('adminLoginBtn').addEventListener('click', () => document.getElementById('pinModal').classList.remove('hidden'));
   document.getElementById('pinSubmitBtn').addEventListener('click', () => {
     if (document.getElementById('pinInput').value === ADMIN_PIN) {
       document.getElementById('pinModal').classList.add('hidden');
@@ -513,21 +611,56 @@ tailwind.config = {
     } else alert('Wrong Password');
   });
 
+  document.getElementById('topBarForm').addEventListener('submit', async (e) => {
+    e.preventDefault();
+    const text = document.getElementById('topBarInput').value;
+    await supabase.from('settings').update({ top_bar_text: text }).eq('id', 1);
+    document.getElementById('adminModal').classList.add('hidden');
+    fetchData();
+    showToast('Top Bar Updated');
+  });
+
+  document.getElementById('adminForm').addEventListener('submit', async (e) => {
+    e.preventDefault();
+    const newP = {
+      title: document.getElementById('adminTitleInput').value,
+      product_code: document.getElementById('adminCodeInput').value,
+      category: document.getElementById('adminCategory').value,
+      sale_price: Number(document.getElementById('adminSalePrice').value),
+      original_price: Number(document.getElementById('adminOrigPrice').value),
+      description: document.getElementById('adminDescInput').value,
+      images: [document.getElementById('adminImg1').value, document.getElementById('adminImg2').value].filter(u => u)
+    };
+    await supabase.from('products').insert([newP]);
+    e.target.reset();
+    fetchData();
+    document.getElementById('adminModal').classList.add('hidden');
+    showToast('Product Added!');
+  });
+
+  async function renderAdminList() {
+    document.getElementById('adminList').innerHTML = products.map(p => `
+      <div class="flex justify-between items-center border p-3 rounded">
+        <span class="text-sm font-bold">${p.title} <span class="text-gray-400 font-normal">(${p.product_code})</span></span>
+        <button onclick="deleteProduct('${p.id}')" class="text-red-500"><i class="fa-solid fa-trash"></i></button>
+      </div>
+    `).join('');
+  }
+  window.deleteProduct = async function(id) {
+    if (!confirm('Delete this product?')) return;
+    await supabase.from('products').delete().eq('id', id);
+    fetchData(); renderAdminList();
+  };
+
   document.querySelectorAll('[data-modal-close]').forEach(b => b.addEventListener('click', () => document.getElementById('productModal').classList.add('hidden')));
+  document.querySelectorAll('[data-cart-close]').forEach(b => b.addEventListener('click', () => document.getElementById('cartModal').classList.add('hidden')));
   document.querySelectorAll('[data-pin-close]').forEach(b => b.addEventListener('click', () => document.getElementById('pinModal').classList.add('hidden')));
   document.querySelectorAll('[data-admin-close]').forEach(b => b.addEventListener('click', () => document.getElementById('adminModal').classList.add('hidden')));
 
-  grid.addEventListener('click', (e) => {
-    const card = e.target.closest('[data-view]');
-    if (card) openProductModal(card.dataset.view);
-  });
-
-  // --- 7. Hero Slider Logic ---
   let slides = [], cur = 0, slideInterval;
   function startSlider() {
     slides = document.querySelectorAll('.hero-slide');
-    cur = 0;
-    clearInterval(slideInterval);
+    cur = 0; clearInterval(slideInterval);
     if (slides.length > 1) {
       slideInterval = setInterval(() => { 
         slides[cur].classList.remove('active'); 
@@ -537,7 +670,6 @@ tailwind.config = {
     }
   }
 
-  // Init
   document.getElementById('year').textContent = new Date().getFullYear();
   fetchData();
 })();
