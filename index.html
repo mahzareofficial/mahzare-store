@@ -1,0 +1,427 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Mahzari — Wear Your Elegance</title>
+<meta name="description" content="Premium Pakistani Women's Clothing by Mahzari.">
+
+<!-- Google Fonts -->
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,400;0,600;0,700;1,400&family=Inter:wght@300;400;500;600&display=swap" rel="stylesheet">
+
+<!-- FontAwesome -->
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+
+<!-- Tailwind CSS -->
+<script src="https://cdn.tailwindcss.com"></script>
+<script>
+tailwind.config = {
+  theme: {
+    extend: {
+      colors: {
+        cream: '#FCFAF8',
+        brand: '#9D2235', 
+        gold: '#C5A880',
+        textMain: '#2D2D2D',
+        textMuted: '#7A7A7A'
+      },
+      fontFamily: {
+        display: ['"Playfair Display"', 'serif'],
+        body: ['Inter', 'sans-serif']
+      }
+    }
+  }
+}
+</script>
+
+<!-- Supabase JS Client -->
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+
+<style>
+  html { scroll-behavior: smooth; }
+  body { background-color: #FCFAF8; color: #2D2D2D; }
+  
+  /* Marquee Animation */
+  @keyframes marquee {
+    0% { transform: translateX(0); }
+    100% { transform: translateX(-50%); }
+  }
+  .animate-marquee { display: inline-block; white-space: nowrap; animation: marquee 20s linear infinite; }
+  .animate-marquee:hover { animation-play-state: paused; }
+
+  /* Hero Slider */
+  .hero-slide { position: absolute; inset: 0; opacity: 0; transition: opacity 1s ease-in-out; background-size: cover; background-position: center; }
+  .hero-slide.active { opacity: 1; }
+</style>
+</head>
+
+<body class="font-body antialiased overflow-x-hidden">
+
+<!-- 1. ANNOUNCEMENT BAR -->
+<div class="bg-brand text-white text-xs tracking-widest uppercase py-2.5 overflow-hidden">
+  <div class="animate-marquee">
+    <span class="mx-4">✦ Free Delivery Nationwide on Orders Above Rs. 3,000</span>
+    <span class="mx-4">✦ Cash on Delivery Available</span>
+    <span class="mx-4">✦ Flat 90% OFF Setup Sale</span>
+    <span class="mx-4">✦ Easy 7-Day Exchange Policy</span>
+    <span class="mx-4">✦ Free Delivery Nationwide on Orders Above Rs. 3,000</span>
+    <span class="mx-4">✦ Cash on Delivery Available</span>
+    <span class="mx-4">✦ Flat 90% OFF Setup Sale</span>
+    <span class="mx-4">✦ Easy 7-Day Exchange Policy</span>
+  </div>
+</div>
+
+<!-- 2. NAVBAR -->
+<header class="sticky top-0 z-40 bg-white/95 backdrop-blur-md border-b border-gray-100">
+  <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+    <div class="flex items-center justify-between h-20">
+      
+      <!-- Client Logo / Name -->
+      <a href="#" class="flex items-center gap-3 group">
+        <div class="w-10 h-10 rounded-full border border-gold flex items-center justify-center text-gold group-hover:bg-gold group-hover:text-white transition-colors">
+          <i class="fa-solid fa-crown text-sm"></i>
+        </div>
+        <div>
+          <h1 class="font-display text-2xl font-bold tracking-tight text-textMain">Mahzari</h1>
+          <p class="text-[9px] uppercase tracking-[0.3em] text-textMuted mt-0.5">Wear Your Elegance</p>
+        </div>
+      </a>
+
+      <nav class="hidden md:flex items-center gap-8 text-sm font-medium text-textMain">
+        <a href="#" class="hover:text-brand transition-colors">Home</a>
+        <a href="#collection" class="hover:text-brand transition-colors">New Arrivals</a>
+        <a href="#collection" class="hover:text-brand transition-colors">Festive</a>
+        <a href="#contact" class="hover:text-brand transition-colors">Contact</a>
+      </nav>
+
+      <div class="flex items-center gap-5">
+        <button class="text-textMain hover:text-brand transition-colors relative">
+          <i class="fa-solid fa-bag-shopping"></i>
+        </button>
+        <button id="mobileMenuBtn" class="md:hidden text-textMain text-xl"><i class="fa-solid fa-bars"></i></button>
+      </div>
+    </div>
+  </div>
+</header>
+
+<!-- 3. HERO SECTION -->
+<section class="relative h-[80vh] min-h-[500px] flex items-center overflow-hidden bg-gray-900">
+  <div class="hero-slide active" style="background-image: url('https://images.unsplash.com/photo-1583391733956-6c78276477e2?auto=format&fit=crop&w=1920&q=80');"></div>
+  <div class="hero-slide" style="background-image: url('https://images.unsplash.com/photo-1605763240000-7e93b172d754?auto=format&fit=crop&w=1920&q=80');"></div>
+  <div class="hero-slide" style="background-image: url('https://images.unsplash.com/photo-1617922001439-4a2e6562f328?auto=format&fit=crop&w=1920&q=80');"></div>
+  <div class="absolute inset-0 bg-black/40"></div>
+
+  <div class="relative z-10 max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 w-full text-center sm:text-left">
+    <div class="max-w-2xl">
+      <span class="text-gold text-xs font-semibold uppercase tracking-[0.2em] mb-4 block">The Signature Collection 2026</span>
+      <h2 class="font-display text-4xl sm:text-6xl font-bold text-white leading-tight mb-6">Elegance Woven <br> Into Every Thread.</h2>
+      <p class="text-gray-200 text-sm sm:text-base leading-relaxed mb-8 max-w-lg mx-auto sm:mx-0">Premium Pakistani pret, luxury lawn, aur festive wear by Mahzari.</p>
+      <div class="flex flex-col sm:flex-row gap-4 justify-center sm:justify-start">
+        <a href="#collection" class="bg-brand hover:bg-[#7a1a29] text-white px-8 py-3.5 rounded-full text-sm font-medium tracking-wide transition-all shadow-lg">Shop Collection</a>
+        <a href="https://wa.me/923299895921?text=Assalam%20o%20Alaikum%20Mahzari!%20Mujhe%20order%20karna%20hai." target="_blank" class="bg-white/10 hover:bg-white/20 backdrop-blur-sm border border-white/30 text-white px-8 py-3.5 rounded-full text-sm font-medium tracking-wide transition-all flex items-center justify-center gap-2"><i class="fa-brands fa-whatsapp text-lg"></i> Order on WhatsApp</a>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- 4. TRUST BADGES -->
+<div class="bg-white border-b border-gray-100 relative z-20 -mt-8 mx-4 sm:mx-8 lg:mx-auto max-w-6xl rounded-2xl shadow-[0_10px_40px_-10px_rgba(0,0,0,0.08)]">
+  <div class="grid grid-cols-2 md:grid-cols-4 divide-x divide-gray-100">
+    <div class="p-6 flex items-center gap-4"><div class="w-10 h-10 rounded-full bg-pink-50 flex items-center justify-center text-brand"><i class="fa-solid fa-gem"></i></div><div><h4 class="text-sm font-semibold text-textMain">Premium Fabric</h4><p class="text-[11px] text-textMuted mt-0.5">Quality you can feel</p></div></div>
+    <div class="p-6 flex items-center gap-4"><div class="w-10 h-10 rounded-full bg-pink-50 flex items-center justify-center text-brand"><i class="fa-solid fa-truck-fast"></i></div><div><h4 class="text-sm font-semibold text-textMain">Fast Delivery</h4><p class="text-[11px] text-textMuted mt-0.5">2-3 days across Pakistan</p></div></div>
+    <div class="p-6 flex items-center gap-4"><div class="w-10 h-10 rounded-full bg-pink-50 flex items-center justify-center text-brand"><i class="fa-solid fa-money-bill-wave"></i></div><div><h4 class="text-sm font-semibold text-textMain">Cash on Delivery</h4><p class="text-[11px] text-textMuted mt-0.5">Pay when it arrives</p></div></div>
+    <div class="p-6 flex items-center gap-4"><div class="w-10 h-10 rounded-full bg-pink-50 flex items-center justify-center text-brand"><i class="fa-solid fa-rotate-left"></i></div><div><h4 class="text-sm font-semibold text-textMain">Easy Exchange</h4><p class="text-[11px] text-textMuted mt-0.5">7-day return policy</p></div></div>
+  </div>
+</div>
+
+<!-- 5. PRODUCT CATALOG -->
+<section id="collection" class="py-20 max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+  <div class="text-center max-w-2xl mx-auto mb-12">
+    <span class="text-gold text-xs font-semibold uppercase tracking-[0.2em]">Curated For You</span>
+    <h2 class="font-display text-4xl font-bold text-textMain mt-3 mb-4">The Signature Collection</h2>
+  </div>
+
+  <div class="flex flex-wrap justify-center gap-3 mb-12" id="filterContainer">
+    <button data-filter="All" class="filter-btn bg-brand text-white px-6 py-2.5 rounded-full text-sm font-medium transition-all shadow-md">All Designs</button>
+    <button data-filter="Stitched" class="filter-btn bg-white border border-gray-200 text-textMain hover:border-brand px-6 py-2.5 rounded-full text-sm font-medium transition-all">Stitched</button>
+    <button data-filter="Unstitched" class="filter-btn bg-white border border-gray-200 text-textMain hover:border-brand px-6 py-2.5 rounded-full text-sm font-medium transition-all">Unstitched</button>
+  </div>
+
+  <div id="productGrid" class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-8">
+    <!-- Products load here via Supabase -->
+    <div class="col-span-full text-center py-10 text-textMuted"><i class="fa-solid fa-spinner fa-spin text-2xl mb-3 text-brand"></i><br>Loading Collection...</div>
+  </div>
+</section>
+
+<!-- 6. FOOTER -->
+<footer id="contact" class="bg-[#1a1a1a] text-gray-400 pt-16 pb-8">
+  <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+    <div class="grid grid-cols-1 md:grid-cols-4 gap-12 mb-12">
+      <div class="md:col-span-1">
+        <div class="flex items-center gap-3 mb-6"><div class="w-10 h-10 rounded-full border border-gold flex items-center justify-center text-gold"><i class="fa-solid fa-crown text-sm"></i></div><h2 class="font-display text-2xl font-bold text-white tracking-tight">Mahzari</h2></div>
+        <p class="text-sm leading-relaxed mb-6">Premium Pakistani women's clothing. Quality, style aur affordability ka perfect combination.</p>
+        <div class="flex gap-4">
+          <a href="#" class="w-9 h-9 rounded-full bg-white/5 hover:bg-brand flex items-center justify-center text-white transition-colors"><i class="fa-brands fa-instagram"></i></a>
+          <a href="https://wa.me/923299895921" class="w-9 h-9 rounded-full bg-white/5 hover:bg-[#25D366] flex items-center justify-center text-white transition-colors"><i class="fa-brands fa-whatsapp"></i></a>
+        </div>
+      </div>
+      <div><h4 class="text-white font-semibold mb-5 uppercase tracking-wider text-sm">Explore</h4><ul class="space-y-3 text-sm"><li><a href="#" class="hover:text-gold">New Arrivals</a></li><li><a href="#" class="hover:text-gold">Festive Collection</a></li><li><a href="#" class="hover:text-gold">Sale</a></li></ul></div>
+      <div><h4 class="text-white font-semibold mb-5 uppercase tracking-wider text-sm">Customer Care</h4><ul class="space-y-3 text-sm"><li><a href="#" class="hover:text-gold">Delivery Policy</a></li><li><a href="#" class="hover:text-gold">Exchange & Returns</a></li><li><a href="#" class="hover:text-gold">FAQs</a></li></ul></div>
+      <div><h4 class="text-white font-semibold mb-5 uppercase tracking-wider text-sm">Get In Touch</h4><ul class="space-y-3 text-sm"><li class="flex items-start gap-3"><i class="fa-solid fa-phone mt-1 text-gold"></i><span>0329-9895921</span></li><li class="flex items-start gap-3"><i class="fa-solid fa-envelope mt-1 text-gold"></i><span>chicwearpk@gmail.com</span></li></ul></div>
+    </div>
+    <div class="border-t border-white/10 pt-6 flex flex-col sm:flex-row items-center justify-between gap-4">
+      <p class="text-xs">&copy; <span id="year"></span> Mahzari. All rights reserved.</p>
+      <button id="adminLoginBtn" class="text-xs text-gray-600 hover:text-gold transition-colors flex items-center gap-1.5"><i class="fa-solid fa-lock text-[10px]"></i> Owner Login</button>
+    </div>
+  </div>
+</footer>
+
+<!-- FLOATING WHATSAPP -->
+<a href="https://wa.me/923299895921?text=Assalam%20o%20Alaikum%20Mahzari!" target="_blank" class="fixed bottom-6 right-6 z-40 w-14 h-14 bg-[#25D366] text-white rounded-full flex items-center justify-center text-2xl shadow-lg hover:scale-110 transition-all"><i class="fa-brands fa-whatsapp"></i></a>
+
+<!-- PRODUCT MODAL -->
+<div id="productModal" class="fixed inset-0 z-50 hidden">
+  <div class="absolute inset-0 bg-black/60 backdrop-blur-sm" data-modal-close></div>
+  <div class="relative z-10 flex items-center justify-center min-h-full p-4">
+    <div class="bg-white w-full max-w-5xl rounded-2xl shadow-2xl relative max-h-[90vh] flex flex-col overflow-hidden">
+      <button type="button" data-modal-close class="absolute top-4 right-4 z-20 w-10 h-10 rounded-full bg-white/90 text-textMain hover:bg-brand hover:text-white flex items-center justify-center shadow-md"><i class="fa-solid fa-xmark"></i></button>
+      <div class="overflow-y-auto">
+        <div class="grid md:grid-cols-2 gap-8 p-6 sm:p-10">
+          <div><img id="modalMainImg" src="" class="w-full h-[350px] sm:h-[500px] object-cover rounded-xl bg-gray-50"></div>
+          <div class="flex flex-col justify-center">
+            <span id="modalCategory" class="inline-flex self-start bg-gray-100 text-textMuted text-[10px] font-bold uppercase tracking-wider px-3 py-1.5 rounded-full mb-4"></span>
+            <h3 id="modalTitle" class="font-display text-3xl font-bold text-textMain mb-2"></h3>
+            <div class="flex items-center gap-3 mb-6 border-b border-gray-100 pb-6"><span id="modalSale" class="text-2xl font-semibold text-brand"></span><span id="modalOrig" class="text-textMuted line-through text-sm"></span></div>
+            <p id="modalDesc" class="text-textMuted text-sm leading-relaxed mb-8"></p>
+            <div id="sizeSection" class="mb-8 hidden"><p class="text-sm font-semibold text-textMain mb-3">Select Size</p><div id="sizeButtons" class="flex flex-wrap gap-2"></div></div>
+            <div id="unstitchedNote" class="hidden mb-8 bg-blue-50/50 border border-blue-100 rounded-lg p-4"><p class="text-sm text-blue-800 font-medium"><i class="fa-solid fa-scissors mr-2"></i>Unstitched 3-Piece (All Sizes Suitable)</p></div>
+            <a id="modalOrderBtn" href="#" target="_blank" class="w-full inline-flex items-center justify-center gap-3 bg-[#25D366] hover:bg-[#1EBE5A] text-white font-semibold px-8 py-4 rounded-full shadow-lg transition-all"><i class="fa-brands fa-whatsapp text-xl"></i> Order on WhatsApp</a>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ADMIN DASHBOARD (Protected by PIN) -->
+<div id="pinModal" class="fixed inset-0 z-50 hidden">
+  <div class="absolute inset-0 bg-black/70 backdrop-blur-sm" data-pin-close></div>
+  <div class="relative z-10 flex items-center justify-center min-h-full p-4">
+    <div class="bg-white rounded-2xl shadow-2xl w-full max-w-sm p-8 relative text-center">
+      <button type="button" data-pin-close class="absolute top-4 right-4 text-gray-400 hover:text-brand"><i class="fa-solid fa-xmark text-lg"></i></button>
+      <h3 class="font-display text-2xl font-bold text-textMain mb-2">Owner Access</h3>
+      <p class="text-xs text-textMuted mb-6">Enter 4-digit PIN (Default: 1234)</p>
+      <input id="pinInput" type="password" maxlength="4" class="w-full text-center text-3xl tracking-[0.5em] font-bold border-2 border-gray-200 rounded-xl py-4 mb-2 focus:border-brand outline-none">
+      <p id="pinError" class="text-red-500 text-xs text-left mb-4 hidden">Incorrect PIN!</p>
+      <button id="pinSubmitBtn" class="w-full bg-brand text-white font-semibold py-3.5 rounded-xl">Login</button>
+    </div>
+  </div>
+</div>
+
+<div id="adminModal" class="fixed inset-0 z-50 hidden">
+  <div class="absolute inset-0 bg-black/70 backdrop-blur-sm" data-admin-close></div>
+  <div class="relative z-10 flex items-start justify-center min-h-full p-4">
+    <div class="bg-white w-full max-w-4xl rounded-2xl shadow-2xl relative max-h-[90vh] flex flex-col overflow-hidden">
+      <div class="flex justify-between p-6 border-b border-gray-100 bg-gray-50"><h3 class="font-display text-xl font-bold">Mahzari Dashboard</h3><button type="button" data-admin-close class="text-gray-400 hover:text-brand"><i class="fa-solid fa-xmark text-xl"></i></button></div>
+      <div class="overflow-y-auto p-6">
+        <div class="bg-gray-50 rounded-xl p-6 mb-8 border border-gray-100">
+          <h4 class="font-semibold mb-4">Add New Product</h4>
+          <form id="adminForm" class="grid sm:grid-cols-2 gap-4">
+            <input id="adminTitleInput" type="text" required placeholder="Title" class="border p-2 rounded">
+            <select id="adminCategory" class="border p-2 rounded"><option value="Stitched">Stitched</option><option value="Unstitched">Unstitched</option></select>
+            <input id="adminSalePrice" type="number" required placeholder="Sale Price" class="border p-2 rounded">
+            <input id="adminOrigPrice" type="number" required placeholder="Original Price" class="border p-2 rounded">
+            <input id="adminDescInput" type="text" placeholder="Description" class="border p-2 rounded sm:col-span-2">
+            <input id="adminImg1" type="url" required placeholder="Image URL (Cloudflare R2 link)" class="border p-2 rounded sm:col-span-2">
+            <button type="submit" class="bg-brand text-white py-2 rounded sm:col-span-2">Add Product</button>
+          </form>
+        </div>
+        <h4 class="font-semibold mb-4">Manage Products</h4>
+        <div id="adminList" class="space-y-3"></div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- JAVASCRIPT -->
+<script>
+(function () {
+  // ⚠️ YAHAN APNI SUPABASE KEYS DALNI HAIN (Baad mein batata hoon kaise) ⚠️
+  const SUPABASE_URL = 'https://cmgjhledlvtcyytezqxr.supabase.co'; 
+  const SUPABASE_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImNtZ2pobGVkbHZ0Y3l5dGV6cXhyIiwicm9sZSI6ImFub24iLCJpYXQiOjE3OTI1NzY0MDUsImV4cCI6MjEwODE1MjQwNX0.gP9IdT--Q787p-t682pjPFH_PH7dsSyR27F7KXatH0g';
+  const supabase = window.supabase.createClient(SUPABASE_URL, SUPABASE_KEY);
+
+  const WA_NUM = '923299895921';
+  const ADMIN_PIN = '1234';
+  const SIZES = ['S', 'M', 'L', 'XL'];
+  
+  let products = [];
+  let currentFilter = 'All';
+  let currentProduct = null;
+  let selectedSize = 'M';
+
+  const grid = document.getElementById('productGrid');
+  const filterBtns = document.querySelectorAll('.filter-btn');
+  const fmt = (n) => Number(n).toLocaleString('en-US');
+
+  // 1. Fetch Products from Supabase
+  function toast(msg) {
+    alert(msg);
+  }
+  async function fetchProducts() {
+    const { data, error } = await supabase.from('products').select('*').order('created_at', { ascending: false });
+    if (error) { console.error(error); toast('Error loading data'); return; }
+    products = data || [];
+    renderProducts();
+  }
+
+  // 2. Render Grid
+  function renderProducts() {
+    const filtered = currentFilter === 'All' ? products : products.filter(p => p.category === currentFilter);
+    if (filtered.length === 0) { grid.innerHTML = `<div class="col-span-full text-center py-10">No products found.</div>`; return; }
+    
+    grid.innerHTML = filtered.map(p => `
+      <article data-view="${p.id}" class="group cursor-pointer">
+        <div class="relative overflow-hidden rounded-xl bg-gray-100 aspect-[3/4]">
+          <img src="${p.images[0]}" class="w-full h-full object-cover group-hover:scale-105 transition-transform duration-700">
+          <div class="absolute bottom-4 left-4 bg-white/90 backdrop-blur px-3 py-1.5 rounded-full flex items-center gap-2">
+            <i class="fa-solid ${p.category === 'Stitched' ? 'fa-shirt' : 'fa-scissors'} text-brand text-[10px]"></i>
+            <span class="text-[10px] font-bold uppercase text-textMain">${p.category}</span>
+          </div>
+        </div>
+        <div class="pt-4 pb-2">
+          <h3 class="font-display text-lg font-bold text-textMain mb-2 group-hover:text-brand transition-colors">${p.title}</h3>
+          <div class="flex items-baseline gap-2">
+            <span class="text-brand font-semibold">Rs. ${fmt(p.sale_price)}</span>
+            <span class="text-textMuted text-xs line-through">Rs. ${fmt(p.original_price)}</span>
+          </div>
+        </div>
+      </article>
+    `).join('');
+  }
+
+  // 3. Filter Logic
+  filterBtns.forEach(btn => {
+    btn.addEventListener('click', (e) => {
+      filterBtns.forEach(b => { b.classList.remove('bg-brand','text-white'); b.classList.add('bg-white','text-textMain'); });
+      e.target.classList.remove('bg-white','text-textMain'); e.target.classList.add('bg-brand','text-white');
+      currentFilter = e.target.dataset.filter;
+      renderProducts();
+    });
+  });
+
+  // 4. Product Modal
+  function openProductModal(id) {
+    const p = products.find(x => x.id === id);
+    if (!p) return;
+    currentProduct = p; selectedSize = 'M';
+    
+    document.getElementById('modalMainImg').src = p.images[0];
+    document.getElementById('modalCategory').textContent = p.category;
+    document.getElementById('modalTitle').textContent = p.title;
+    document.getElementById('modalSale').textContent = `Rs. ${fmt(p.sale_price)}`;
+    document.getElementById('modalOrig').textContent = `Rs. ${fmt(p.original_price)}`;
+    document.getElementById('modalDesc').textContent = p.description;
+
+    if (p.category === 'Stitched') {
+      document.getElementById('sizeSection').classList.remove('hidden');
+      document.getElementById('unstitchedNote').classList.add('hidden');
+      renderSizes();
+    } else {
+      document.getElementById('sizeSection').classList.add('hidden');
+      document.getElementById('unstitchedNote').classList.remove('hidden');
+    }
+    updateModalOrderLink();
+    document.getElementById('productModal').classList.remove('hidden');
+  }
+
+  function renderSizes() {
+    document.getElementById('sizeButtons').innerHTML = SIZES.map(s => `
+      <button data-size="${s}" class="w-10 h-10 rounded-full border flex items-center justify-center ${s === selectedSize ? 'bg-brand text-white' : 'border-gray-200'}">${s}</button>
+    `).join('');
+    document.querySelectorAll('[data-size]').forEach(btn => {
+      btn.addEventListener('click', (e) => { selectedSize = e.target.dataset.size; renderSizes(); updateModalOrderLink(); });
+    });
+  }
+
+  function updateModalOrderLink() {
+    let msg = `Assalam o Alaikum Mahzari! 🌸\n\nI want to order:\n👗 ${currentProduct.title}\n`;
+    if (currentProduct.category === 'Stitched') msg += `📏 Size: ${selectedSize}\n`;
+    msg += `💰 Price: Rs. ${fmt(currentProduct.sale_price)}`;
+    document.getElementById('modalOrderBtn').href = `https://wa.me/${WA_NUM}?text=${encodeURIComponent(msg)}`;
+  }
+
+  // 5. Admin Add/Delete
+  document.getElementById('adminForm').addEventListener('submit', async (e) => {
+    e.preventDefault();
+    const newP = {
+      title: document.getElementById('adminTitleInput').value,
+      category: document.getElementById('adminCategory').value,
+      sale_price: Number(document.getElementById('adminSalePrice').value),
+      original_price: Number(document.getElementById('adminOrigPrice').value),
+      description: document.getElementById('adminDescInput').value,
+      images: [document.getElementById('adminImg1').value]
+    };
+    
+    const { error } = await supabase.from('products').insert([newP]);
+    if (error) { alert('Error adding product: ' + error.message); return; }
+    
+    e.target.reset();
+    fetchProducts(); // Refresh grid
+    document.getElementById('adminModal').classList.add('hidden');
+    alert('Product Added!');
+  });
+
+  async function deleteProduct(id) {
+    if (!confirm('Delete this product?')) return;
+    const { error } = await supabase.from('products').delete().eq('id', id);
+    if (error) { alert('Error deleting'); return; }
+    fetchProducts();
+  }
+
+  function renderAdminList() {
+    // Simple admin list rendering
+    document.getElementById('adminList').innerHTML = products.map(p => `
+      <div class="flex justify-between items-center border p-3 rounded">
+        <span>${p.title} - Rs. ${p.sale_price}</span>
+        <button onclick="window.deleteProduct('${p.id}')" class="text-red-500"><i class="fa-solid fa-trash"></i></button>
+      </div>
+    `).join('');
+  }
+
+  window.deleteProduct = deleteProduct; // Expose for inline onclick
+
+  // 6. PIN & Modals Logic
+  document.getElementById('adminLoginBtn').addEventListener('click', () => {
+    document.getElementById('pinModal').classList.remove('hidden');
+  });
+  document.getElementById('pinSubmitBtn').addEventListener('click', () => {
+    if (document.getElementById('pinInput').value === ADMIN_PIN) {
+      document.getElementById('pinModal').classList.add('hidden');
+      document.getElementById('adminModal').classList.remove('hidden');
+      renderAdminList();
+    } else alert('Wrong PIN');
+  });
+
+  document.querySelectorAll('[data-modal-close]').forEach(b => b.addEventListener('click', () => document.getElementById('productModal').classList.add('hidden')));
+  document.querySelectorAll('[data-pin-close]').forEach(b => b.addEventListener('click', () => document.getElementById('pinModal').classList.add('hidden')));
+  document.querySelectorAll('[data-admin-close]').forEach(b => b.addEventListener('click', () => document.getElementById('adminModal').classList.add('hidden')));
+
+  grid.addEventListener('click', (e) => {
+    const card = e.target.closest('[data-view]');
+    if (card) openProductModal(card.dataset.view);
+  });
+
+  // Hero Slider
+  let slides = document.querySelectorAll('.hero-slide'), cur = 0;
+  setInterval(() => { slides[cur].classList.remove('active'); cur = (cur + 1) % slides.length; slides[cur].classList.add('active'); }, 4000);
+
+  // Init
+  document.getElementById('year').textContent = new Date().getFullYear();
+  fetchProducts();
+})();
+</script>
+</body>
+</html>
